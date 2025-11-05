@@ -71,7 +71,6 @@ function QuoteGenerator() {
             className="new-quote-button"
             disabled={isBusy}
           >
-            <span className="button-icon">🔄</span>
             {isBusy ? "Refreshing..." : "Get New Quote"}
           </button>
         </div>
