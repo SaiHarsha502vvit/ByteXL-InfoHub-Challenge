@@ -4,6 +4,7 @@ import "./App.css";
 import WeatherModule from "./components/WeatherModule";
 import CurrencyConverter from "./components/CurrencyConverter";
 import QuoteGenerator from "./components/QuoteGenerator";
+import HelpDesk from "./components/HelpDesk";
 
 const TAB_CONFIG = [
   {
@@ -30,12 +31,10 @@ const TAB_CONFIG = [
 ];
 
 function App() {
-  const [activeTab, setActiveTab] = useState("Weather");
+  const [activeTab, setActiveTab] = useState("HelpDesk");
 
   const ActiveModule = useMemo(
-    () =>
-      TAB_CONFIG.find((tab) => tab.id === activeTab)?.component ??
-      WeatherModule,
+    () => TAB_CONFIG.find((tab) => tab.id === activeTab)?.component ?? HelpDesk,
     [activeTab]
   );
 
