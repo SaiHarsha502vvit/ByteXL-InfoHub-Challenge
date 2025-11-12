@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchWeather } from "../lib/api";
 import "./WeatherModule.css";
@@ -7,6 +7,8 @@ function WeatherModule() {
   const queryClient = useQueryClient();
   const [city, setCity] = useState("London");
   const [inputCity, setInputCity] = useState("");
+  const [showError, setShowError] = useState(false);
+
   const { data, error, isLoading, isFetching, refetch } = useQuery({
     queryKey: ["weather", city],
     queryFn: () => fetchWeather(city),
@@ -14,6 +16,20 @@ function WeatherModule() {
     staleTime: 1000 * 60 * 10,
     gcTime: 1000 * 60 * 60,
   });
+
+  // Auto-hide error after 5 seconds
+  useEffect(() => {
+    if (error && !data) {
+      setShowError(true);
+      const timer = setTimeout(() => {
+        setShowError(false);
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    } else {
+      setShowError(false);
+    }
+  }, [error, data]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -37,7 +53,7 @@ function WeatherModule() {
     if (!previewCity || previewCity.toLowerCase() === city.toLowerCase()) {
       return;
     }
-
+    console.log(previewCity);
     queryClient.prefetchQuery({
       queryKey: ["weather", previewCity],
       queryFn: () => fetchWeather(previewCity),
@@ -54,19 +70,6 @@ function WeatherModule() {
       <div className="loading">
         <div className="loading-spinner"></div>
         <p>Loading weather data...</p>
-      </div>
-    );
-  }
-
-  if (error && !data) {
-    return (
-      <div className="error">
-        <div className="error-icon">⚠️</div>
-        <h3>Error</h3>
-        <p>{errorMessage}</p>
-        <button onClick={() => refetch()} className="retry-button">
-          Try Again
-        </button>
       </div>
     );
   }
@@ -100,6 +103,17 @@ function WeatherModule() {
           {isBusy ? "Searching..." : "Search"}
         </button>
       </form>
+
+      {error && !data && showError && (
+        <div className="error-overlay">
+          <div className="error-icon">⚠️</div>
+          <h3>Error</h3>
+          <p>{errorMessage}</p>
+          <button onClick={() => refetch()} className="retry-button">
+            Try Again
+          </button>
+        </div>
+      )}
 
       {error && data && (
         <output className="inline-error">

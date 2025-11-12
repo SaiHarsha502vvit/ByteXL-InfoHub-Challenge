@@ -174,8 +174,8 @@ app.get('/api/currency', async (req, res) => {
   try {
   const parsedAmount = Number.parseFloat(req.query.amount);
   const amount = Number.isNaN(parsedAmount) ? 100 : parsedAmount;
-    const exchangeApiKey = process.env.EXCHANGE_API_KEY;
-    const baseCurrency = 'INR';
+  const exchangeApiKey = process.env.EXCHANGE_API_KEY;
+  const baseCurrency = 'INR';
 
   if (Number.isNaN(amount) || amount <= 0) {
       return res.status(400).json({
